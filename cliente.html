@@ -252,7 +252,7 @@
 
     <!-- ATENDIMENTOS -->
     <div class="card" id="cardAtend" style="display:none">
-      <div class="card-header"><div class="card-icon">✨</div><div class="card-title">Histórico de Atendimentos</div></div>
+      <div class="card-header"><div class="card-icon">✨</div><div class="card-title">Último Atendimento & Check-in</div></div>
       <div class="card-scroll" id="listaAtend"></div>
     </div>
 
@@ -273,7 +273,12 @@ function _hoje() { var d=new Date(); var u=d.getTime()+d.getTimezoneOffset()*600
 
 async function _fetch(path) {
   var r = await fetch(SUPA_URL + '/rest/v1/' + path, {
-    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Range': '0-9999',
+      'Prefer': 'count=none'
+    }
   });
   return r.json();
 }
@@ -382,20 +387,46 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
     }).join('');
   }
 
-  // ATENDIMENTOS com scroll — todos sem limite
+  // ÚLTIMO ATENDIMENTO + ÚLTIMO CHECK-IN
+  document.getElementById('cardAtend').style.display = 'flex';
+  var htmlResume = '';
+
+  // Último atendimento
   if (atendimentos.length > 0) {
-    document.getElementById('cardAtend').style.display = 'flex';
-    document.getElementById('listaAtend').innerHTML = atendimentos.map(function(a) {
-      var srvIds = a.servico_ids||[];
-      var nomes = srvIds.map(function(id){ var sv=servicos.find(function(x){return x.id===id;}); return sv?sv.nome:id; }).join(' + ')
-        ||(a.servico_nomes_cache||[]).join(' + ')||'—';
-      return '<div class="atend-row">'
-        +'<div class="atend-data">'+_fmtDate(a.data)+'</div>'
-        +'<div class="atend-servico">'+nomes+'</div>'
-        +'<div class="atend-valor">'+_fmt(a.valor)+'</div>'
-        +'</div>';
-    }).join('');
+    var a = atendimentos[0]; // já vem ordenado por data desc
+    var srvIds = a.servico_ids||[];
+    var nomes = srvIds.map(function(id){ var sv=servicos.find(function(x){return x.id===id;}); return sv?sv.nome:id; }).join(' + ')
+      ||(a.servico_nomes_cache||[]).join(' + ')||'—';
+    htmlResume += '<div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)">'
+      +'<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem">💆 Último Atendimento</div>'
+      +'<div style="font-size:14px;font-weight:500;color:var(--text-dark);margin-bottom:2px">'+nomes+'</div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem">'
+      +'<span style="font-size:12px;color:var(--text-light)">'+_fmtDate(a.data)+'</span>'
+      +'<span style="font-family:Cormorant Garamond,serif;font-size:18px;color:var(--gold-dark)">'+_fmt(a.valor)+'</span>'
+      +'</div>'
+      +'</div>';
   }
+
+  // Último check-in
+  var checkins = [];
+  sessoes.forEach(function(s) {
+    if (s.checkin_data) {
+      var srvNome = _resolverServicos(s.servico_ids||[], servicos, s.servico);
+      checkins.push({ data: s.checkin_data, hora: s.checkin_hora||'—', servico: srvNome });
+    }
+  });
+  checkins.sort(function(a,b){ return b.data.localeCompare(a.data) || b.hora.localeCompare(a.hora); });
+  if (checkins.length > 0) {
+    var ck = checkins[0];
+    htmlResume += '<div style="padding:1rem 1.25rem">'
+      +'<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem">✅ Último Check-in</div>'
+      +'<div style="font-size:14px;font-weight:500;color:var(--text-dark);margin-bottom:2px">'+ck.servico+'</div>'
+      +'<div style="font-size:12px;color:var(--text-light)">'+ck.data+' às '+ck.hora+'</div>'
+      +'</div>';
+  }
+
+  if (!htmlResume) htmlResume = '<div class="empty" style="padding:2rem">Nenhum registro ainda</div>';
+  document.getElementById('listaAtend').innerHTML = htmlResume;
 }
 
 function _resolverServicos(ids, servicos, fallback) {
