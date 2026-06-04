@@ -206,7 +206,7 @@
     <div>
       <div class="hero-saudacao">Seu espaço exclusivo 🌸</div>
       <div class="hero-nome" id="heroNome">Carregando...</div>
-      <div class="hero-sub" id="heroSub"></div>
+
     </div>
   </div>
 
@@ -321,7 +321,7 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
 
   document.getElementById('heroAvatar').textContent = nome.charAt(0).toUpperCase();
   document.getElementById('heroNome').textContent = nome.split(' ')[0];
-  document.getElementById('heroSub').textContent = atendimentos.length + ' atendimento' + (atendimentos.length!==1?'s':'') + ' realizados';
+  document.getElementById('heroSub').textContent = '';
 
   // PRÓXIMA SESSÃO
   var pendentes = sessoes.filter(function(s){ return s.status==='pendente' && s.data>=hoje; });
