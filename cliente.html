@@ -274,7 +274,7 @@
   </div>
 
   <div class="footer">
-    Desenvolvido com 💗 para <strong>Liza Figueiredo Estética & Beleza</strong><br>
+    Desenvolvido com 💗 <strong>Liza Figueiredo Estética & Beleza</strong><br>
     <span id="footerAtualiza" style="margin-top:4px;display:block"></span>
   </div>
 
@@ -315,9 +315,10 @@ async function carregar() {
 
   // Buscar dados em paralelo
   var nomeEnc = encodeURIComponent(_nomeCliente);
+  var nomeIlike = encodeURIComponent(_nomeCliente.toLowerCase());
   var [agenda, atendimentos, servicos] = await Promise.all([
-    _fetch('agenda?cliente=eq.' + nomeEnc + '&select=*'),
-    _fetch('atendimentos?cliente=eq.' + nomeEnc + '&select=*&order=data.desc&limit=20'),
+    _fetch('agenda?cliente=ilike.' + nomeEnc + '&select=*'),
+    _fetch('atendimentos?cliente=ilike.' + nomeEnc + '&select=*&order=data.desc&limit=20'),
     _fetch('servicos?select=*')
   ]);
 
