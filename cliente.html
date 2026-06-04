@@ -17,7 +17,8 @@
 
     /* LOADING */
     #loading {
-      position:fixed; inset:0; background:linear-gradient(160deg,#111113,#1C1C1E);
+      position:fixed; inset:0;
+      background:linear-gradient(160deg,#111113,#1C1C1E);
       display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999;
     }
     .load-logo {
@@ -34,7 +35,7 @@
     /* TOPBAR */
     .topbar {
       background:linear-gradient(135deg,#1C1C1E,#2C2C2E);
-      padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between;
+      padding:0.85rem 2rem; display:flex; align-items:center; justify-content:space-between;
       position:sticky; top:0; z-index:100; box-shadow:0 2px 20px rgba(0,0,0,0.3);
     }
     .topbar-brand { display:flex; align-items:center; gap:12px; }
@@ -46,90 +47,98 @@
     }
     .topbar-name { font-family:'Cormorant Garamond',serif; font-size:15px; color:white; letter-spacing:1px; }
     .topbar-sub { font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:2px; text-transform:uppercase; }
-    .topbar-atualiza { font-size:10px; color:rgba(255,255,255,0.3); letter-spacing:0.5px; }
+    .topbar-atualiza { font-size:10px; color:rgba(255,255,255,0.35); }
 
     /* HERO */
     .hero {
       background:linear-gradient(135deg,#FFF8F9,#FFF0F5);
-      padding:2rem 1.5rem; border-bottom:1px solid var(--border);
+      padding:1.75rem 2rem; border-bottom:1px solid var(--border);
       display:flex; align-items:center; gap:1.25rem;
     }
     .hero-avatar {
-      width:64px; height:64px; border-radius:50%; flex-shrink:0;
+      width:56px; height:56px; border-radius:50%; flex-shrink:0;
       background:linear-gradient(135deg,#D4A0A8,#B07880);
       display:flex; align-items:center; justify-content:center;
-      font-family:'Cormorant Garamond',serif; font-size:28px; color:white;
+      font-family:'Cormorant Garamond',serif; font-size:26px; color:white;
       box-shadow:0 4px 20px rgba(212,160,168,0.4);
     }
-    .hero-txt {}
-    .hero-saudacao { font-size:12px; color:var(--text-light); letter-spacing:1px; text-transform:uppercase; }
-    .hero-nome { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:400; color:var(--text-dark); line-height:1.1; }
+    .hero-saudacao { font-size:11px; color:var(--text-light); letter-spacing:1px; text-transform:uppercase; }
+    .hero-nome { font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--text-dark); line-height:1.1; }
     .hero-sub { font-size:12px; color:var(--gold-dark); margin-top:2px; }
 
-    /* MAIN */
-    .main { padding:1.5rem; max-width:680px; margin:0 auto; }
+    /* MAIN GRID */
+    .main {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap:1.25rem;
+      padding:1.5rem 2rem;
+      max-width:1400px;
+    }
+    @media(max-width:768px) {
+      .main { grid-template-columns:1fr; padding:1rem; }
+      .topbar { padding:0.75rem 1rem; }
+      .hero { padding:1.25rem 1rem; }
+    }
 
     /* CARDS */
     .card {
-      background:white; border-radius:16px; border:1px solid var(--border);
-      overflow:hidden; margin-bottom:1.25rem;
-      box-shadow:0 2px 12px rgba(0,0,0,0.04);
+      background:white; border-radius:14px; border:1px solid var(--border);
+      overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.04);
+      display:flex; flex-direction:column;
     }
+    .card-full { grid-column: 1 / -1; }
     .card-header {
       padding:1rem 1.25rem; border-bottom:1px solid var(--border);
       display:flex; align-items:center; gap:0.75rem;
       background:linear-gradient(135deg,#FDFBF8,#FAF5EE);
+      flex-shrink:0;
     }
-    .card-icon { font-size:20px; }
+    .card-icon { font-size:18px; }
     .card-title { font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--text-dark); letter-spacing:1px; }
-    .card-body { padding:1.25rem; }
+    .card-body { padding:1.25rem; flex:1; }
+    .card-scroll { padding:0; flex:1; overflow-y:auto; max-height:380px; }
+    .card-scroll::-webkit-scrollbar { width:4px; }
+    .card-scroll::-webkit-scrollbar-track { background:var(--off-white); }
+    .card-scroll::-webkit-scrollbar-thumb { background:var(--gold); border-radius:2px; }
 
     /* PRÓXIMA SESSÃO */
     .proxima-box {
       background:linear-gradient(135deg,#1C1C1E,#2C2C2E);
-      border-radius:12px; padding:1.25rem;
-      display:flex; align-items:center; justify-content:space-between;
-      flex-wrap:wrap; gap:1rem;
+      border-radius:10px; padding:1.25rem;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
     }
-    .proxima-data { font-family:'Cormorant Garamond',serif; font-size:28px; color:white; line-height:1; }
-    .proxima-hora { font-size:13px; color:rgba(255,255,255,0.6); margin-top:2px; }
-    .proxima-servico { font-size:12px; color:#D4A0A8; margin-top:4px; letter-spacing:0.5px; }
+    .proxima-data { font-family:'Cormorant Garamond',serif; font-size:26px; color:white; line-height:1; }
+    .proxima-hora { font-size:12px; color:rgba(255,255,255,0.55); margin-top:2px; }
+    .proxima-servico { font-size:12px; color:#D4A0A8; margin-top:4px; }
     .btn-wa {
       background:#25D366; color:white; border:none; border-radius:10px;
-      padding:0.65rem 1.25rem; font-family:'Jost',sans-serif; font-size:13px;
+      padding:0.6rem 1.2rem; font-family:'Jost',sans-serif; font-size:12px;
       font-weight:500; cursor:pointer; white-space:nowrap;
       box-shadow:0 4px 12px rgba(37,211,102,0.3);
     }
 
-    /* PROGRESSO */
-    .progresso-wrap { margin-bottom:1rem; }
-    .progresso-nums {
-      display:flex; justify-content:space-between; align-items:center;
-      margin-bottom:0.5rem;
-    }
+    /* PACOTE */
+    .progresso-nums { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
     .progresso-label { font-size:12px; color:var(--text-light); }
-    .progresso-valor { font-family:'Cormorant Garamond',serif; font-size:20px; color:var(--text-dark); }
-    .progresso-bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
-    .progresso-fill {
-      height:100%; border-radius:4px;
-      background:linear-gradient(90deg,#D4A0A8,#B07880);
-      transition:width 1s ease;
-    }
-    .saldo-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; margin-top:1rem; }
-    .saldo-item { text-align:center; padding:0.75rem; background:var(--off-white); border-radius:10px; border:1px solid var(--border); }
-    .saldo-item-label { font-size:10px; color:var(--text-light); letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
-    .saldo-item-val { font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--text-dark); }
+    .progresso-valor { font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--text-dark); }
+    .progresso-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-bottom:1rem; }
+    .progresso-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#D4A0A8,#B07880); transition:width 1s ease; }
+    .saldo-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; }
+    .saldo-item { text-align:center; padding:0.75rem 0.5rem; background:var(--off-white); border-radius:10px; border:1px solid var(--border); }
+    .saldo-item-label { font-size:9px; color:var(--text-light); letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+    .saldo-item-val { font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--text-dark); }
     .saldo-item-val.danger { color:var(--danger); }
     .saldo-item-val.success { color:var(--success); }
 
     /* SESSÕES */
     .sessao-row {
-      display:flex; align-items:center; gap:1rem; padding:0.75rem 0;
+      display:flex; align-items:center; gap:1rem; padding:0.75rem 1.25rem;
       border-bottom:1px solid var(--border);
     }
     .sessao-row:last-child { border-bottom:none; }
     .sessao-num {
-      width:28px; height:28px; border-radius:50%; flex-shrink:0;
+      width:26px; height:26px; border-radius:50%; flex-shrink:0;
       display:flex; align-items:center; justify-content:center;
       font-size:11px; font-weight:600;
     }
@@ -140,60 +149,47 @@
     .sessao-info { flex:1; }
     .sessao-data { font-size:13px; font-weight:500; color:var(--text-dark); }
     .sessao-servico { font-size:11px; color:var(--text-light); margin-top:1px; }
-    .sessao-status { font-size:11px; font-weight:500; }
+    .sessao-status { font-size:11px; font-weight:500; white-space:nowrap; }
     .sessao-status.realizado { color:#388E3C; }
     .sessao-status.pendente { color:var(--gold-dark); }
-    .sessao-status.hoje { color:#D4A0A8; }
+    .sessao-status.hoje { color:#D4A0A8; font-weight:600; }
     .sessao-status.atrasado { color:var(--danger); }
 
     /* ATENDIMENTOS */
     .atend-row {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:0.75rem 0; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:0.5rem;
+      display:flex; align-items:center; padding:0.75rem 1.25rem;
+      border-bottom:1px solid var(--border); gap:1rem; flex-wrap:wrap;
     }
     .atend-row:last-child { border-bottom:none; }
-    .atend-data { font-size:12px; color:var(--text-light); min-width:80px; }
-    .atend-servico { font-size:13px; color:var(--text-dark); flex:1; padding:0 0.75rem; }
-    .atend-valor { font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--gold-dark); font-weight:500; }
+    .atend-data { font-size:11px; color:var(--text-light); min-width:75px; flex-shrink:0; }
+    .atend-servico { font-size:13px; color:var(--text-dark); flex:1; }
+    .atend-valor { font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--gold-dark); font-weight:500; white-space:nowrap; }
 
     /* FOOTER */
     .footer {
-      text-align:center; padding:2rem 1.5rem;
-      font-size:11px; color:var(--text-light); letter-spacing:1px;
+      text-align:center; padding:1.5rem 2rem;
+      font-size:11px; color:var(--text-light); letter-spacing:0.5px;
+      grid-column: 1 / -1;
     }
     .footer strong { color:var(--gold-dark); }
 
     /* ERRO */
-    .erro-box {
-      min-height:100vh; display:flex; flex-direction:column;
-      align-items:center; justify-content:center; padding:2rem; text-align:center;
-    }
+    .erro-box { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; text-align:center; }
     .erro-icon { font-size:64px; margin-bottom:1rem; }
     .erro-titulo { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--text-dark); margin-bottom:0.5rem; }
     .erro-sub { font-size:14px; color:var(--text-light); }
-
-    /* EMPTY */
     .empty { text-align:center; padding:2rem; color:var(--text-light); font-size:13px; }
-    .empty-icon { font-size:40px; margin-bottom:0.5rem; opacity:0.4; }
-
-    @media(max-width:480px) {
-      .saldo-grid { grid-template-columns:1fr 1fr; }
-      .hero-nome { font-size:22px; }
-    }
   </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loading">
   <div class="load-logo">L</div>
   <div class="load-txt">Liza Figueiredo</div>
   <div class="load-sub">Estética & Beleza · Carregando...</div>
 </div>
 
-<!-- CONTEÚDO -->
 <div id="app" style="display:none">
-
   <div class="topbar">
     <div class="topbar-brand">
       <div class="topbar-logo">L</div>
@@ -202,19 +198,19 @@
         <div class="topbar-sub">Estética & Beleza</div>
       </div>
     </div>
-    <div class="topbar-atualiza" id="txtAtualiza">Atualizado agora</div>
+    <div class="topbar-atualiza" id="txtAtualiza"></div>
   </div>
 
   <div class="hero">
     <div class="hero-avatar" id="heroAvatar">?</div>
-    <div class="hero-txt">
+    <div>
       <div class="hero-saudacao">Seu espaço exclusivo 🌸</div>
       <div class="hero-nome" id="heroNome">Carregando...</div>
       <div class="hero-sub" id="heroSub"></div>
     </div>
   </div>
 
-  <div class="main">
+  <div class="main" id="mainGrid">
 
     <!-- PRÓXIMA SESSÃO -->
     <div class="card" id="cardProxima" style="display:none">
@@ -235,26 +231,15 @@
     <div class="card" id="cardPacote" style="display:none">
       <div class="card-header"><div class="card-icon">💆</div><div class="card-title">Meu Pacote</div></div>
       <div class="card-body">
-        <div class="progresso-wrap">
-          <div class="progresso-nums">
-            <div class="progresso-label">Progresso do tratamento</div>
-            <div class="progresso-valor"><span id="sessoesReal">0</span>/<span id="sessoesTotal">0</span> sessões</div>
-          </div>
-          <div class="progresso-bar"><div class="progresso-fill" id="progressoFill" style="width:0%"></div></div>
+        <div class="progresso-nums">
+          <div class="progresso-label">Progresso do tratamento</div>
+          <div class="progresso-valor"><span id="sessoesReal">0</span>/<span id="sessoesTotal">0</span> sessões</div>
         </div>
+        <div class="progresso-bar"><div class="progresso-fill" id="progressoFill" style="width:0%"></div></div>
         <div class="saldo-grid">
-          <div class="saldo-item">
-            <div class="saldo-item-label">Total</div>
-            <div class="saldo-item-val" id="saldoTotal">R$ 0</div>
-          </div>
-          <div class="saldo-item">
-            <div class="saldo-item-label">Já pago</div>
-            <div class="saldo-item-val success" id="saldoPago">R$ 0</div>
-          </div>
-          <div class="saldo-item">
-            <div class="saldo-item-label">Restante</div>
-            <div class="saldo-item-val danger" id="saldoRestante">R$ 0</div>
-          </div>
+          <div class="saldo-item"><div class="saldo-item-label">Total</div><div class="saldo-item-val" id="saldoTotal">R$ 0</div></div>
+          <div class="saldo-item"><div class="saldo-item-label">Já pago</div><div class="saldo-item-val success" id="saldoPago">R$ 0</div></div>
+          <div class="saldo-item"><div class="saldo-item-label">Restante</div><div class="saldo-item-val danger" id="saldoRestante">R$ 0</div></div>
         </div>
       </div>
     </div>
@@ -262,30 +247,25 @@
     <!-- SESSÕES -->
     <div class="card" id="cardSessoes" style="display:none">
       <div class="card-header"><div class="card-icon">🗓️</div><div class="card-title">Minhas Sessões</div></div>
-      <div class="card-body" id="listaSessoes"></div>
+      <div class="card-scroll" id="listaSessoes"></div>
     </div>
 
     <!-- ATENDIMENTOS -->
     <div class="card" id="cardAtend" style="display:none">
       <div class="card-header"><div class="card-icon">✨</div><div class="card-title">Histórico de Atendimentos</div></div>
-      <div class="card-body" id="listaAtend"></div>
+      <div class="card-scroll" id="listaAtend"></div>
     </div>
 
+    <div class="footer">
+      Desenvolvido com 💗 <strong>Liza Figueiredo Estética & Beleza</strong><br>
+      <span id="footerAtualiza" style="margin-top:4px;display:block"></span>
+    </div>
   </div>
-
-  <div class="footer">
-    Desenvolvido com 💗 <strong>Liza Figueiredo Estética & Beleza</strong><br>
-    <span id="footerAtualiza" style="margin-top:4px;display:block"></span>
-  </div>
-
 </div>
 
 <script>
 var SUPA_URL = 'https://clxtlgkzsdzmqbvhkwft.supabase.co';
 var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNseHRsZ2t6c2R6bXFidmhrd2Z0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5OTI4NTksImV4cCI6MjA5MzU2ODg1OX0.QqjhvC5Y9yp7RohU4oPo5L5lx4IIWnGa8OmIdyuD4Ag';
-
-var _nomeCliente = '';
-var _telLiza = '5521999999999'; // será detectado dos dados
 
 function _fmt(v) { return 'R$ ' + parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function _fmtDate(s) { if(!s) return '—'; var p=s.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:s; }
@@ -299,136 +279,121 @@ async function _fetch(path) {
 }
 
 async function carregar() {
-  // Pegar token da URL
   var params = new URLSearchParams(window.location.search);
   var token = params.get('id');
   if (!token) { mostrarErro('Link inválido', 'Este link não é válido. Solicite um novo link à Liza.'); return; }
 
-  // Verificar token
   var links = await _fetch('links_clientes?id=eq.' + encodeURIComponent(token) + '&select=*');
   if (!links || !links.length || !links[0].ativo) {
-    mostrarErro('Link inativo', 'Este link foi desativado. Entre em contato com a Liza para solicitar um novo.');
-    return;
+    mostrarErro('Link inativo', 'Este link foi desativado. Entre em contato com a Liza.'); return;
   }
 
-  _nomeCliente = links[0].nome_cliente;
+  var nomeCliente = links[0].nome_cliente;
+  var nomeEnc = encodeURIComponent(nomeCliente);
 
-  // Buscar dados em paralelo
-  var nomeEnc = encodeURIComponent(_nomeCliente);
-  var nomeIlike = encodeURIComponent(_nomeCliente.toLowerCase());
   var [agenda, atendimentos, servicos] = await Promise.all([
     _fetch('agenda?cliente=ilike.' + nomeEnc + '&select=*'),
-    _fetch('atendimentos?cliente=ilike.' + nomeEnc + '&select=*&order=data.desc&limit=20'),
+    _fetch('atendimentos?cliente=ilike.' + nomeEnc + '&select=*&order=data.desc'),
     _fetch('servicos?select=*')
   ]);
 
-  // Buscar sessões dos agendamentos
   var todasSessoes = [];
   for (var i = 0; i < agenda.length; i++) {
     var ag = agenda[i];
     var sessoes = await _fetch('sessoes?agenda_id=eq.' + encodeURIComponent(ag.id) + '&select=*&order=data.asc');
-    sessoes.forEach(function(s) {
-      s._agId = ag.id;
-      s._agSinal = ag.sinal;
-      s._agCor = ag.cor;
-      todasSessoes.push(s);
-    });
+    sessoes.forEach(function(s) { s._agSinal = ag.sinal; todasSessoes.push(s); });
   }
 
-  renderDashboard(_nomeCliente, agenda, todasSessoes, atendimentos, servicos);
+  renderDashboard(nomeCliente, agenda, todasSessoes, atendimentos, servicos);
   document.getElementById('loading').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-
-  // Atualizar a cada 30s
-  setInterval(function() { carregar(); }, 30000);
   atualizarTimestamp();
+  setInterval(function(){ carregar(); }, 30000);
 }
 
 function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
-  // Hero
-  document.getElementById('heroAvatar').textContent = nome.charAt(0).toUpperCase();
-  document.getElementById('heroNome').textContent = nome.split(' ')[0];
-  var totalAtend = atendimentos.length;
-  document.getElementById('heroSub').textContent = totalAtend + ' atendimento' + (totalAtend!==1?'s':'') + ' realizados';
-
   var hoje = _hoje();
 
-  // Próxima sessão pendente
-  var pendentes = sessoes.filter(function(s){ return s.status === 'pendente' && s.data >= hoje; });
+  document.getElementById('heroAvatar').textContent = nome.charAt(0).toUpperCase();
+  document.getElementById('heroNome').textContent = nome.split(' ')[0];
+  document.getElementById('heroSub').textContent = atendimentos.length + ' atendimento' + (atendimentos.length!==1?'s':'') + ' realizados';
+
+  // PRÓXIMA SESSÃO
+  var pendentes = sessoes.filter(function(s){ return s.status==='pendente' && s.data>=hoje; });
   pendentes.sort(function(a,b){ return a.data.localeCompare(b.data); });
   var proxima = pendentes[0];
   if (proxima) {
-    document.getElementById('cardProxima').style.display = 'block';
+    document.getElementById('cardProxima').style.display = 'flex';
     document.getElementById('proximaData').textContent = _fmtDate(proxima.data);
-    document.getElementById('proximaHora').textContent = proxima.hora ? (proxima.hora_fim ? proxima.hora + ' às ' + proxima.hora_fim : proxima.hora) : '';
-    var srvNomes = _resolverServicos(proxima.servico_ids || [], servicos, proxima.servico);
-    document.getElementById('proximaServico').textContent = srvNomes;
+    var horaStr = proxima.hora ? (proxima.hora_fim ? proxima.hora+' às '+proxima.hora_fim : proxima.hora) : '';
+    document.getElementById('proximaHora').textContent = horaStr;
+    var srvNome = _resolverServicos(proxima.servico_ids||[], servicos, proxima.servico);
+    document.getElementById('proximaServico').textContent = srvNome;
     document.getElementById('btnWaConfirmar').onclick = function() {
-      var msg = 'Olá Liza! 🌸 Passando para confirmar minha sessão de ' + srvNomes + ' no dia ' + _fmtDate(proxima.data) + (proxima.hora ? ' às ' + proxima.hora : '') + '. ✨';
-      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+      var msg = 'Olá Liza! 🌸 Confirmando minha sessão de '+srvNome+' no dia '+_fmtDate(proxima.data)+(proxima.hora?' às '+proxima.hora:'')+'. ✨';
+      window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
     };
   }
 
-  // Pacote — pegar o mais recente
-  if (agenda.length > 0 && sessoes.length > 0) {
-    document.getElementById('cardPacote').style.display = 'block';
-    var real = sessoes.filter(function(s){ return s.status === 'realizado'; }).length;
+  // PACOTE
+  if (sessoes.length > 0) {
+    document.getElementById('cardPacote').style.display = 'flex';
+    var real = sessoes.filter(function(s){ return s.status==='realizado'; }).length;
     var total = sessoes.length;
     var pct = total > 0 ? Math.round(real/total*100) : 0;
     document.getElementById('sessoesReal').textContent = real;
     document.getElementById('sessoesTotal').textContent = total;
-    document.getElementById('progressoFill').style.width = pct + '%';
+    document.getElementById('progressoFill').style.width = pct+'%';
 
-    // Saldo
     var totalPacote = 0;
     sessoes.forEach(function(s) {
       (s.servico_ids||[]).forEach(function(id) {
         var sv = servicos.find(function(x){ return x.id===id; });
-        if (sv) totalPacote += parseFloat(sv.preco)||0;
+        if (sv && sv.preco) totalPacote += parseFloat(sv.preco)||0;
       });
     });
-    var sinal = agenda.reduce(function(acc,ag){ return acc + (parseFloat(ag.sinal)||0); }, 0);
-    var pago = atendimentos.reduce(function(acc,a){ return acc + (parseFloat(a.valor)||0); }, 0);
+    var sinal = agenda.reduce(function(acc,ag){ return acc+(parseFloat(ag.sinal)||0); },0);
+    var pago = atendimentos.reduce(function(acc,a){ return acc+(parseFloat(a.valor)||0); },0);
     var restante = Math.max(0, totalPacote - sinal - pago);
     document.getElementById('saldoTotal').textContent = _fmt(totalPacote);
-    document.getElementById('saldoPago').textContent = _fmt(sinal + pago);
+    document.getElementById('saldoPago').textContent = _fmt(sinal+pago);
     document.getElementById('saldoRestante').textContent = _fmt(restante);
-    if (restante === 0) document.getElementById('saldoRestante').className = 'saldo-item-val success';
+    if (restante===0) document.getElementById('saldoRestante').className = 'saldo-item-val success';
   }
 
-  // Lista de sessões
+  // SESSÕES com scroll
   if (sessoes.length > 0) {
-    document.getElementById('cardSessoes').style.display = 'block';
+    document.getElementById('cardSessoes').style.display = 'flex';
     var sessoesOrd = sessoes.slice().sort(function(a,b){ return a.data.localeCompare(b.data); });
-    document.getElementById('listaSessoes').innerHTML = sessoesOrd.map(function(s, i) {
-      var isHoje = s.data === hoje;
-      var isAtrasado = s.data < hoje && s.status === 'pendente';
-      var cls = s.status === 'realizado' ? 'realizado' : isHoje ? 'hoje' : isAtrasado ? 'atrasado' : 'pendente';
-      var statusTxt = s.status === 'realizado' ? '✓ Realizado' : isHoje ? 'Hoje!' : isAtrasado ? 'Reagendar' : 'Agendado';
+    document.getElementById('listaSessoes').innerHTML = sessoesOrd.map(function(s,i) {
+      var isHoje = s.data===hoje;
+      var isAtrasado = s.data<hoje && s.status==='pendente';
+      var cls = s.status==='realizado'?'realizado':isHoje?'hoje':isAtrasado?'atrasado':'pendente';
+      var statusTxt = s.status==='realizado'?'✓ Realizado':isHoje?'Hoje!':isAtrasado?'Reagendar':'Agendado';
       var srvNome = _resolverServicos(s.servico_ids||[], servicos, s.servico);
       return '<div class="sessao-row">'
-        + '<div class="sessao-num ' + cls + '">' + (i+1) + '</div>'
-        + '<div class="sessao-info">'
-        + '<div class="sessao-data">' + _fmtDate(s.data) + (s.hora ? ' · ' + s.hora : '') + '</div>'
-        + '<div class="sessao-servico">' + srvNome + '</div>'
-        + '</div>'
-        + '<div class="sessao-status ' + cls + '">' + statusTxt + '</div>'
-        + '</div>';
+        +'<div class="sessao-num '+cls+'">'+(i+1)+'</div>'
+        +'<div class="sessao-info">'
+        +'<div class="sessao-data">'+_fmtDate(s.data)+(s.hora?' · '+s.hora:'')+'</div>'
+        +'<div class="sessao-servico">'+srvNome+'</div>'
+        +'</div>'
+        +'<div class="sessao-status '+cls+'">'+statusTxt+'</div>'
+        +'</div>';
     }).join('');
   }
 
-  // Atendimentos
+  // ATENDIMENTOS com scroll — todos sem limite
   if (atendimentos.length > 0) {
-    document.getElementById('cardAtend').style.display = 'block';
-    document.getElementById('listaAtend').innerHTML = atendimentos.slice(0,10).map(function(a) {
-      var srvIds = a.servico_ids || [];
+    document.getElementById('cardAtend').style.display = 'flex';
+    document.getElementById('listaAtend').innerHTML = atendimentos.map(function(a) {
+      var srvIds = a.servico_ids||[];
       var nomes = srvIds.map(function(id){ var sv=servicos.find(function(x){return x.id===id;}); return sv?sv.nome:id; }).join(' + ')
-        || (a.servico_nomes_cache||[]).join(' + ') || '—';
+        ||(a.servico_nomes_cache||[]).join(' + ')||'—';
       return '<div class="atend-row">'
-        + '<div class="atend-data">' + _fmtDate(a.data) + '</div>'
-        + '<div class="atend-servico">' + nomes + '</div>'
-        + '<div class="atend-valor">' + _fmt(a.valor) + '</div>'
-        + '</div>';
+        +'<div class="atend-data">'+_fmtDate(a.data)+'</div>'
+        +'<div class="atend-servico">'+nomes+'</div>'
+        +'<div class="atend-valor">'+_fmt(a.valor)+'</div>'
+        +'</div>';
     }).join('');
   }
 }
@@ -438,7 +403,7 @@ function _resolverServicos(ids, servicos, fallback) {
     var nomes = ids.map(function(id){ var sv=servicos.find(function(x){return x.id===id;}); return sv?sv.nome:id; }).filter(Boolean);
     if (nomes.length) return nomes.join(' + ');
   }
-  return fallback || '—';
+  return fallback||'—';
 }
 
 function mostrarErro(titulo, msg) {
@@ -450,11 +415,10 @@ function atualizarTimestamp() {
   var agora = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   var el = document.getElementById('txtAtualiza');
   var el2 = document.getElementById('footerAtualiza');
-  if (el) el.textContent = 'Atualizado às ' + agora;
-  if (el2) el2.textContent = 'Dados em tempo real · ' + agora;
+  if(el) el.textContent = 'Atualizado às '+agora;
+  if(el2) el2.textContent = 'Dados em tempo real · '+agora;
 }
 
-// Iniciar
 carregar();
 </script>
 </body>
