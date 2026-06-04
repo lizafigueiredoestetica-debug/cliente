@@ -321,7 +321,7 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
 
   document.getElementById('heroAvatar').textContent = nome.charAt(0).toUpperCase();
   document.getElementById('heroNome').textContent = nome.split(' ')[0];
-  document.getElementById('heroSub').textContent = '';
+  var _hs = document.getElementById('heroSub'); if(_hs) _hs.textContent = '';
 
   // PRÓXIMA SESSÃO
   var pendentes = sessoes.filter(function(s){ return s.status==='pendente' && s.data>=hoje; });
