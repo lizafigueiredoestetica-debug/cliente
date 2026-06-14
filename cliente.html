@@ -272,15 +272,18 @@ function _fmtDate(s) { if(!s) return '—'; var p=s.split('-'); return p.length=
 function _hoje() { var d=new Date(); var u=d.getTime()+d.getTimezoneOffset()*60000; var b=new Date(u-3*3600000); return b.getFullYear()+'-'+String(b.getMonth()+1).padStart(2,'0')+'-'+String(b.getDate()).padStart(2,'0'); }
 
 async function _fetch(path) {
-  var r = await fetch(SUPA_URL + '/rest/v1/' + path, {
-    headers: {
-      'apikey': SUPA_KEY,
-      'Authorization': 'Bearer ' + SUPA_KEY,
-      'Range': '0-9999',
-      'Prefer': 'count=none'
-    }
-  });
-  return r.json();
+  try {
+    var r = await fetch(SUPA_URL + '/rest/v1/' + path, {
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Range': '0-9999',
+        'Prefer': 'count=none'
+      }
+    });
+    var data = await r.json();
+    return Array.isArray(data) ? data : [];
+  } catch(e) { return []; }
 }
 
 async function carregar() {
@@ -302,21 +305,17 @@ async function carregar() {
     _fetch('servicos?select=*')
   ]);
 
-  // ── Se agenda encontrou clientes com nomes diferentes do link, buscar atendimentos por esses nomes também ──
-  var nomesExtras = [];
-  agenda.forEach(function(ag) {
-    var n = (ag.cliente||'').trim();
-    if (n && n.toLowerCase() !== nomeCliente.toLowerCase() && nomesExtras.indexOf(n) < 0) {
-      nomesExtras.push(n);
-    }
-  });
-  for (var ni = 0; ni < nomesExtras.length; ni++) {
-    var extraAtends = await _fetch('atendimentos?cliente=ilike.' + encodeURIComponent(nomesExtras[ni]) + '&select=*&order=data.desc');
-    if (extraAtends && extraAtends.length) {
+  // ── Buscar atendimentos por nomes alternativos encontrados na agenda ──
+  var nomesJaBuscados = [nomeCliente.toLowerCase()];
+  for (var ni = 0; ni < agenda.length; ni++) {
+    var nAg = (agenda[ni].cliente||'').trim();
+    if (nAg && nomesJaBuscados.indexOf(nAg.toLowerCase()) < 0) {
+      nomesJaBuscados.push(nAg.toLowerCase());
+      var extraAtends = await _fetch('atendimentos?cliente=ilike.' + encodeURIComponent(nAg) + '&select=*&order=data.desc');
       atendimentos = atendimentos.concat(extraAtends);
     }
   }
-  atendimentos.sort(function(a,b){ return b.data.localeCompare(a.data); });
+  atendimentos.sort(function(a,b){ return (b.data||'').localeCompare(a.data||''); });
 
   var todasSessoes = [];
   for (var i = 0; i < agenda.length; i++) {
