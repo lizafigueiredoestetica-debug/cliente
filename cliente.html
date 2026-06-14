@@ -297,23 +297,41 @@ async function carregar() {
   }
 
   var nomeCliente = links[0].nome_cliente;
-  var nomeEnc = encodeURIComponent(nomeCliente);
+  var cpfCliente  = (links[0].cpf_cliente||'').replace(/\D/g,'');
+  var nomesAlternativos = links[0].nomes_alternativos || [nomeCliente];
+  if (!Array.isArray(nomesAlternativos)) nomesAlternativos = [nomeCliente];
 
-  var [agenda, atendimentos, servicos] = await Promise.all([
-    _fetch('agenda?cliente=ilike.' + nomeEnc + '&select=*'),
-    _fetch('atendimentos?cliente=ilike.' + nomeEnc + '&select=*&order=data.desc'),
-    _fetch('servicos?select=*')
-  ]);
+  // Buscar agenda e serviços
+  var servicos = await _fetch('servicos?select=*');
 
-  // ── Buscar atendimentos por nomes alternativos encontrados na agenda ──
-  var nomesJaBuscados = [nomeCliente.toLowerCase()];
-  for (var ni = 0; ni < agenda.length; ni++) {
-    var nAg = (agenda[ni].cliente||'').trim();
-    if (nAg && nomesJaBuscados.indexOf(nAg.toLowerCase()) < 0) {
-      nomesJaBuscados.push(nAg.toLowerCase());
-      var extraAtends = await _fetch('atendimentos?cliente=ilike.' + encodeURIComponent(nAg) + '&select=*&order=data.desc');
-      atendimentos = atendimentos.concat(extraAtends);
-    }
+  // Buscar agenda por todos os nomes alternativos
+  var agenda = [];
+  var nomesAgBuscados = [];
+  for (var ni = 0; ni < nomesAlternativos.length; ni++) {
+    var nBusc = nomesAlternativos[ni];
+    if (nomesAgBuscados.indexOf(nBusc.toLowerCase()) >= 0) continue;
+    nomesAgBuscados.push(nBusc.toLowerCase());
+    var agExtra = await _fetch('agenda?cliente=ilike.' + encodeURIComponent(nBusc) + '&select=*');
+    agenda = agenda.concat(agExtra);
+  }
+  // Se CPF disponível, buscar agenda por CPF também
+  if (cpfCliente) {
+    var agCpf = await _fetch('agenda?cpf=eq.' + encodeURIComponent(cpfCliente) + '&select=*');
+    agCpf.forEach(function(ag) {
+      if (!agenda.find(function(x){ return x.id === ag.id; })) agenda.push(ag);
+      var n = (ag.cliente||'').trim();
+      if (n && nomesAgBuscados.indexOf(n.toLowerCase()) < 0) nomesAgBuscados.push(n.toLowerCase());
+    });
+  }
+
+  // Buscar atendimentos por todos os nomes encontrados
+  var atendimentos = [];
+  for (var mi = 0; mi < nomesAgBuscados.length; mi++) {
+    var nAt = nomesAgBuscados[mi];
+    var atExtra = await _fetch('atendimentos?cliente=ilike.' + encodeURIComponent(nAt) + '&select=*&order=data.desc');
+    atExtra.forEach(function(a) {
+      if (!atendimentos.find(function(x){ return x.id === a.id; })) atendimentos.push(a);
+    });
   }
   atendimentos.sort(function(a,b){ return (b.data||'').localeCompare(a.data||''); });
 
