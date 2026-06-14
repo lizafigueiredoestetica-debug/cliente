@@ -383,15 +383,27 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
     document.getElementById('sessoesTotal').textContent = total;
     document.getElementById('progressoFill').style.width = pct+'%';
 
+    // Total do pacote: usar protocolo se existir, senão soma serviços da 1ª sessão apenas
     var totalPacote = 0;
-    sessoes.forEach(function(s) {
-      (s.servico_ids||[]).forEach(function(id) {
-        var sv = servicos.find(function(x){ return x.id===id; });
-        if (sv && sv.preco) totalPacote += parseFloat(sv.preco)||0;
+    var sessaoComProtocolo = sessoes.find(function(s){ return s.protocolo_valor; });
+    if (sessaoComProtocolo) {
+      totalPacote = parseFloat(sessaoComProtocolo.protocolo_valor)||0;
+    } else {
+      // Soma os serviços únicos da primeira sessão (evita multiplicar por nº de sessões)
+      var idsContados = {};
+      sessoes.forEach(function(s) {
+        (s.servico_ids||[]).forEach(function(id) {
+          if (idsContados[id]) return;
+          idsContados[id] = true;
+          var sv = servicos.find(function(x){ return x.id===id; });
+          if (sv && sv.preco) totalPacote += parseFloat(sv.preco)||0;
+        });
       });
-    });
+    }
     var sinal = agenda.reduce(function(acc,ag){ return acc+(parseFloat(ag.sinal)||0); },0);
-    var pago = atendimentos.reduce(function(acc,a){ return acc+(parseFloat(a.valor)||0); },0);
+    // Pago: excluir sinais (já contados separadamente)
+    var pago = atendimentos.filter(function(a){ return a.pagto !== 'sinal'; })
+                           .reduce(function(acc,a){ return acc+(parseFloat(a.valor)||0); },0);
     var restante = Math.max(0, totalPacote - sinal - pago);
     document.getElementById('saldoTotal').textContent = _fmt(totalPacote);
     document.getElementById('saldoPago').textContent = _fmt(sinal+pago);
@@ -424,9 +436,10 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
   document.getElementById('cardAtend').style.display = 'flex';
   var htmlResume = '';
 
-  // Último atendimento
-  if (atendimentos.length > 0) {
-    var a = atendimentos[0]; // já vem ordenado por data desc
+  // Último atendimento (excluir sinais)
+  var atendsSemSinal = atendimentos.filter(function(a){ return a.pagto !== 'sinal'; });
+  if (atendsSemSinal.length > 0) {
+    var a = atendsSemSinal[0]; // já vem ordenado por data desc
     var srvIds = a.servico_ids||[];
     var nomes = srvIds.map(function(id){ var sv=servicos.find(function(x){return x.id===id;}); return sv?sv.nome:id; }).join(' + ')
       ||(a.servico_nomes_cache||[]).join(' + ')||'—';
