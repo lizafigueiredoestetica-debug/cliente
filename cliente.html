@@ -302,6 +302,22 @@ async function carregar() {
     _fetch('servicos?select=*')
   ]);
 
+  // ── Se agenda encontrou clientes com nomes diferentes do link, buscar atendimentos por esses nomes também ──
+  var nomesExtras = [];
+  agenda.forEach(function(ag) {
+    var n = (ag.cliente||'').trim();
+    if (n && n.toLowerCase() !== nomeCliente.toLowerCase() && nomesExtras.indexOf(n) < 0) {
+      nomesExtras.push(n);
+    }
+  });
+  for (var ni = 0; ni < nomesExtras.length; ni++) {
+    var extraAtends = await _fetch('atendimentos?cliente=ilike.' + encodeURIComponent(nomesExtras[ni]) + '&select=*&order=data.desc');
+    if (extraAtends && extraAtends.length) {
+      atendimentos = atendimentos.concat(extraAtends);
+    }
+  }
+  atendimentos.sort(function(a,b){ return b.data.localeCompare(a.data); });
+
   var todasSessoes = [];
   for (var i = 0; i < agenda.length; i++) {
     var ag = agenda[i];
