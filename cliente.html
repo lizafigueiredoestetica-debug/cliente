@@ -118,19 +118,6 @@
       box-shadow:0 4px 12px rgba(37,211,102,0.3);
     }
 
-    /* PACOTE */
-    .progresso-nums { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
-    .progresso-label { font-size:12px; color:var(--text-light); }
-    .progresso-valor { font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--text-dark); }
-    .progresso-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-bottom:1rem; }
-    .progresso-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#D4A0A8,#B07880); transition:width 1s ease; }
-    .saldo-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; }
-    .saldo-item { text-align:center; padding:0.75rem 0.5rem; background:var(--off-white); border-radius:10px; border:1px solid var(--border); }
-    .saldo-item-label { font-size:9px; color:var(--text-light); letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
-    .saldo-item-val { font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--text-dark); }
-    .saldo-item-val.danger { color:var(--danger); }
-    .saldo-item-val.success { color:var(--success); }
-
     /* SESSÕES */
     .sessao-row {
       display:flex; align-items:center; gap:1rem; padding:0.75rem 1.25rem;
@@ -213,7 +200,7 @@
   <div class="main" id="mainGrid">
 
     <!-- PRÓXIMA SESSÃO -->
-    <div class="card" id="cardProxima" style="display:none">
+    <div class="card card-full" id="cardProxima" style="display:none">
       <div class="card-header"><div class="card-icon">📅</div><div class="card-title">Próxima Sessão</div></div>
       <div class="card-body">
         <div class="proxima-box">
@@ -227,18 +214,6 @@
       </div>
     </div>
 
-    <!-- MEU PACOTE -->
-    <div class="card" id="cardPacote" style="display:none">
-      <div class="card-header"><div class="card-icon">💆</div><div class="card-title">Meu Pacote</div></div>
-      <div class="card-body">
-        <div class="progresso-nums">
-          <div class="progresso-label">Progresso do tratamento</div>
-          <div class="progresso-valor"><span id="sessoesReal">0</span>/<span id="sessoesTotal">0</span> sessões</div>
-        </div>
-        <div class="progresso-bar"><div class="progresso-fill" id="progressoFill" style="width:0%"></div></div>
-        <div id="saldoCiclosWrap"></div>
-      </div>
-    </div>
 
     <!-- SESSÕES -->
     <div class="card" id="cardSessoes" style="display:none">
@@ -369,51 +344,7 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
     };
   }
 
-  // PACOTE
-  if (sessoes.length > 0) {
-    document.getElementById('cardPacote').style.display = 'flex';
-    var real = sessoes.filter(function(s){ return s.status==='realizado'; }).length;
-    var total = sessoes.length;
-    var pct = total > 0 ? Math.round(real/total*100) : 0;
-    document.getElementById('sessoesReal').textContent = real;
-    document.getElementById('sessoesTotal').textContent = total;
-    document.getElementById('progressoFill').style.width = pct+'%';
-
-    // Calcular por ciclo (cor da sessão)
-    var cicloMapC = {}; var cicloOrderC = [];
-    sessoes.forEach(function(s){ var k=s.cor||'__original__'; if(!cicloMapC[k]){ cicloMapC[k]=[]; cicloOrderC.push(k); } cicloMapC[k].push(s); });
-    var saldoWrap = document.getElementById('saldoCiclosWrap');
-    if (saldoWrap) saldoWrap.innerHTML = cicloOrderC.map(function(cicloKey, ci) {
-      var sessoesCiclo = cicloMapC[cicloKey];
-      var isOriginal = cicloKey === '__original__';
-      var corExibir = sessoesCiclo[0].cor || (agenda[0]&&agenda[0].cor) || '#D4A0A8';
-      // Total do ciclo
-      var totalCiclo = 0;
-      var sessaoComProt = sessoesCiclo.find(function(s){ return s.protocolo_valor; });
-      if(sessaoComProt){ totalCiclo = parseFloat(sessaoComProt.protocolo_valor)||0; }
-      else { var idsC={}; sessoesCiclo.forEach(function(s){ (s.servico_ids||[]).forEach(function(id){ if(idsC[id]) return; idsC[id]=true; var sv=servicos.find(function(x){return x.id===id;}); if(sv&&sv.preco) totalCiclo+=parseFloat(sv.preco)||0; }); }); }
-      // Sinal do ciclo
-      var sinalCiclo = isOriginal
-        ? agenda.reduce(function(acc,ag){ return acc+(parseFloat(ag.sinal)||0); },0)
-        : (sessoesCiclo[0]&&sessoesCiclo[0].sinal_ciclo ? parseFloat(sessoesCiclo[0].sinal_ciclo) : 0);
-      // Atendimentos pagos no intervalo do ciclo
-      var datasC = sessoesCiclo.map(function(s){return s.data;}).filter(Boolean).sort();
-      var dMinC = datasC[0]||''; var dMaxC = datasC[datasC.length-1]||'';
-      var pagoCiclo = atendimentos.filter(function(a){
-        return a.pagto!=='sinal' && (!dMinC||a.data>=dMinC) && (!dMaxC||a.data<=dMaxC);
-      }).reduce(function(acc,a){return acc+(parseFloat(a.valor)||0);},0);
-      var restCiclo = Math.max(0, totalCiclo - sinalCiclo - pagoCiclo);
-      var labelCiclo = cicloOrderC.length > 1 ? 'Ciclo '+(ci+1) : '';
-      var borderStyle = 'border-left:3px solid '+corExibir+';padding-left:8px;margin-bottom:8px';
-      return '<div style="'+borderStyle+'">'
-        +(labelCiclo?'<div style="font-size:10px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">'+labelCiclo+'</div>':'')
-        +'<div class="saldo-grid">'
-        +'<div class="saldo-item"><div class="saldo-item-label">Total</div><div class="saldo-item-val">'+_fmt(totalCiclo)+'</div></div>'
-        +'<div class="saldo-item"><div class="saldo-item-label">Já pago</div><div class="saldo-item-val success">'+_fmt(sinalCiclo+pagoCiclo)+'</div></div>'
-        +'<div class="saldo-item"><div class="saldo-item-label">Restante</div><div class="saldo-item-val '+(restCiclo>0?'danger':'success')+'">'+_fmt(restCiclo)+'</div></div>'
-        +'</div></div>';
-    }).join('');
-  }
+  // Pacote financeiro removido — cliente não visualiza dados financeiros
 
   // SESSÕES com scroll
   if (sessoes.length > 0) {
@@ -450,10 +381,7 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
     htmlResume += '<div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)">'
       +'<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem">💆 Último Atendimento</div>'
       +'<div style="font-size:14px;font-weight:500;color:var(--text-dark);margin-bottom:2px">'+nomes+'</div>'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem">'
-      +'<span style="font-size:12px;color:var(--text-light)">'+_fmtDate(a.data)+'</span>'
-      +'<span style="font-family:Cormorant Garamond,serif;font-size:18px;color:var(--gold-dark)">'+_fmt(a.valor)+'</span>'
-      +'</div>'
+      +'<div style="font-size:12px;color:var(--text-light)">'+_fmtDate(a.data)+'</div>'
       +'</div>';
   }
 
