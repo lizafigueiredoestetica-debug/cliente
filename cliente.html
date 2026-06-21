@@ -393,7 +393,11 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
       checkins.push({ data: s.checkin_data, hora: s.checkin_hora||'—', servico: srvNome });
     }
   });
-  checkins.sort(function(a,b){ return b.data.localeCompare(a.data) || b.hora.localeCompare(a.hora); });
+  checkins.sort(function(a,b){
+    var da = (a.data.split('/').reverse().join('-')) + ' ' + a.hora;
+    var db_ = (b.data.split('/').reverse().join('-')) + ' ' + b.hora;
+    return db_.localeCompare(da);
+  });
   if (checkins.length > 0) {
     var ck = checkins[0];
     htmlResume += '<div style="padding:1rem 1.25rem">'
