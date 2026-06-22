@@ -317,8 +317,21 @@ async function carregar() {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   atualizarTimestamp();
-  setInterval(function(){ carregar(); }, 30000);
 }
+
+// Atualização automática: um único timer ativo, nunca duplicado.
+// Pausa quando a aba está em segundo plano (economiza requisições e bateria)
+// e atualiza imediatamente quando o cliente volta para a aba.
+var _autoRefreshTimer = null;
+function _iniciarAutoRefresh() {
+  if (_autoRefreshTimer) clearInterval(_autoRefreshTimer);
+  _autoRefreshTimer = setInterval(function(){
+    if (document.visibilityState === 'visible') carregar();
+  }, 30000);
+}
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'visible') carregar();
+});
 
 function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
   var hoje = _hoje();
@@ -393,11 +406,7 @@ function renderDashboard(nome, agenda, sessoes, atendimentos, servicos) {
       checkins.push({ data: s.checkin_data, hora: s.checkin_hora||'—', servico: srvNome });
     }
   });
-  checkins.sort(function(a,b){
-    var da = (a.data.split('/').reverse().join('-')) + ' ' + a.hora;
-    var db_ = (b.data.split('/').reverse().join('-')) + ' ' + b.hora;
-    return db_.localeCompare(da);
-  });
+  checkins.sort(function(a,b){ return b.data.localeCompare(a.data) || b.hora.localeCompare(a.hora); });
   if (checkins.length > 0) {
     var ck = checkins[0];
     htmlResume += '<div style="padding:1rem 1.25rem">'
@@ -433,6 +442,7 @@ function atualizarTimestamp() {
 }
 
 carregar();
+_iniciarAutoRefresh();
 </script>
 </body>
 </html>
